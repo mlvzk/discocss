@@ -1,0 +1,33 @@
+#!/bin/sh
+
+confdir="$HOME/.config/discocss"
+preloadFile="$confdir/preload.js"
+cssFile="$confdir/custom.css"
+
+mkdir -p "$confdir"
+
+if [ ! -f $preloadFile ]; then
+    cat <<EOF >$preloadFile
+(() => {
+  const css = require("fs").readFileSync("$cssFile");
+
+  function inject({ document, window }) {
+    window.addEventListener("load", () => {
+      const style = document.createElement("style");
+      style.innerHTML = css;
+      document.head.appendChild(style);
+    });
+  }
+
+  inject(require("electron").webFrame.context);
+})();
+EOF
+
+    ln -s "$preloadFile" /tmp/discocss-preload.js
+fi
+
+# TODO autodetect this path
+sed -i 's|  // App preload script, used to provide a replacement native API now that|try { require\(`/tmp/discocss-preload.js`) } catch \(e\) {console.error\(e\);} |' \
+    ~/.config/discord/0.0.11/modules/discord_desktop_core/core.asar
+
+Discord
