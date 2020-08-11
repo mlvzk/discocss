@@ -29,4 +29,5 @@ ln -s "$preloadFile" /tmp/discocss-preload.js
 sed -i 's|  // App preload script, used to provide a replacement native API now that|try { require\(`/tmp/discocss-preload.js`) } catch \(e\) {console.error\(e\);} |' \
     "$XDG_CONFIG_HOME"/discord/*/modules/discord_desktop_core/core.asar
 
-Discord
+command -v discord && exec discord
+command -v Discord && exec Discord
