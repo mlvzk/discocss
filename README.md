@@ -6,7 +6,7 @@ A tiny Discord css-injector.
 
 ```sh
 git clone https://github.com/mlvzk/discocss
-cp discocss/discocss /usr/bin # or any other directory in your #PATH
+cp discocss/discocss /usr/bin # or any other directory in your $PATH
 ```
 
 # Usage
