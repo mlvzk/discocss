@@ -6,23 +6,27 @@ cssFile="$confdir/custom.css"
 
 mkdir -p "$confdir"
 
-if [ ! -f "$preloadFile" ]; then
-    cat <<EOF > "$preloadFile"
+cat <<EOF > "$preloadFile"
 (() => {
-  const css = require("fs").readFileSync("$cssFile");
+  const fs = require("fs");
+  const cssFile = "/home/rwq/.config/discocss/custom.css";
+  const css = fs.readFileSync(cssFile);
 
   function inject({ document, window }) {
     window.addEventListener("load", () => {
       const style = document.createElement("style");
       style.innerHTML = css;
       document.head.appendChild(style);
+
+      fs.watch(cssFile, {}, () => {
+        style.innerHTML = fs.readFileSync(cssFile);
+      });
     });
   }
 
   inject(require("electron").webFrame.context);
 })();
 EOF
-fi
 
 ln -s "$preloadFile" /tmp/discocss-preload.js
 
