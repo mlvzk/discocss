@@ -9,7 +9,7 @@ mkdir -p "$confdir"
 cat <<EOF > "$preloadFile"
 (() => {
   const fs = require("fs");
-  const cssFile = "/home/rwq/.config/discocss/custom.css";
+  const cssFile = "$cssFile";
   const css = fs.readFileSync(cssFile);
 
   function inject({ document, window }) {
