@@ -6,6 +6,8 @@ cssFile="$confdir/custom.css"
 
 mkdir -p "$confdir"
 
+touch "$cssFile"
+
 cat <<EOF > "$preloadFile"
 (() => {
   const fs = require("fs");
