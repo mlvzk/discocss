@@ -11,10 +11,11 @@ touch "$cssFile"
 cat <<EOF > "$preloadFile"
 (() => {
   const fs = require("fs");
+  const confDir = "$confdir";
   const cssFile = "$cssFile";
 
   function reload(style) {
-      style.innerHTML = fs.readFileSync(cssFile);
+    style.innerHTML = fs.readFileSync(cssFile);
   }
 
   function inject({ document, window }) {
@@ -23,7 +24,7 @@ cat <<EOF > "$preloadFile"
       reload(style);
       document.head.appendChild(style);
 
-      fs.watch(cssFile, {}, () => reload(style));
+      fs.watch(confDir, {}, () => reload(style));
     });
   }
 
