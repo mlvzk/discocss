@@ -4,6 +4,10 @@ A tiny Discord css-injector.
 
 # Installation
 
+On Arch Linux, you can use the [unoffical AUR package](https://aur.archlinux.org/packages/discocss-git/)
+
+For other distributions, follow the instructions below
+
 ```sh
 git clone https://github.com/mlvzk/discocss
 cp discocss/discocss /usr/bin # or any other directory in your $PATH
