@@ -20,7 +20,13 @@ If you use Arch Linux, there's an unofficial AUR package available: [discocss-gi
 +   discocss.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, home-manager, discocss, ... }: {
+  outputs = {
+    self,
+    nixpkgs,
+    home-manager,
++   discocss,
+    ...,
+  }: {
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
@@ -36,7 +42,7 @@ Put your css in `~/.config/discocss/custom.css`
 
 Run `discocss`
 
-# Usage with NixOS in Home Manager
+## Usage with Home Manager on NixOS
 
 ```nix
 programs.discocss = {
