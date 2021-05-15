@@ -34,16 +34,19 @@ EOF
 
 ln -f -s "$preloadFile" /tmp/discocss-preload.js
 
+core_asar=""
+sed_options=""
 if [ "$(uname)" = "Darwin" ]; then
-    which gsed 1>/dev/null || echo 'run "brew install coreutils" to have GNU/sed for macOS'
-    LC_ALL=C sed -i '' 's|  // App preload script, used to provide a replacement native API now that|try { require\(`/tmp/discocss-preload.js`) } catch \(e\) {console.error\(e\);} |' \
-    "$HOME"/Library/Application\ Support/discord/*/modules/discord_desktop_core/core.asar
+  sed_options='-i ""'
+  core_asar=$(ls "$HOME/Library/Application Support/discord/"*"/modules/discord_desktop_core/core.asar")
 else
-    sed -i 's|  // App preload script, used to provide a replacement native API now that|try { require\(`/tmp/discocss-preload.js`) } catch \(e\) {console.error\(e\);} |' \
-    "$XDG_CONFIG_HOME"/discord/*/modules/discord_desktop_core/core.asar
+  sed_options='-i ""'
+  core_asar=$(ls "$XDG_CONFIG_HOME/discord/"*"/modules/discord_desktop_core/core.asar")
 fi
 
 
+LC_ALL=C sed $sed_options 's|  // App preload script, used to provide a replacement native API now that|try { require\(`/tmp/discocss-preload.js`) } catch \(e\) {console.error\(e\);} |' \
+  "$core_asar"
 
 command -v discord && exec discord
 command -v Discord && exec Discord
