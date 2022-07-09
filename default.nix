@@ -27,9 +27,14 @@ runCommand "discocss"
   buildInputs = [ makeWrapper ];
   preferLocalBuild = true;
 } ''
-  mkdir -p $out/bin
+  mkdir -p $out/{bin,share}
 
-  ${lib.optionalString discordAlias "ln -s $out/bin/discocss $out/bin/Discord"}
+  ${lib.optionalString discordAlias ''
+    ln -s $out/bin/discocss $out/bin/Discord
+
+    ln -s ${discord}/share/* $out/share/
+  ''}
+
 
   makeWrapper ${unwrapped}/bin/discocss $out/bin/discocss \
     --set DISCOCSS_DISCORD_BIN ${discord}/bin/Discord
