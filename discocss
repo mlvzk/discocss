@@ -65,6 +65,6 @@ if [ "$discordBin" ]; then
   unset DISCOCSS_DISCORD_BIN
   exec "$discordBin"
 else
-  command -v discord && exec discord
-  command -v Discord && exec Discord
+  command -v discord && exec discord $*
+  command -v Discord && exec Discord $*
 fi
