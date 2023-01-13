@@ -11,24 +11,19 @@ touch "$cssFile"
 cat <<EOF > "$preloadFile"
 module.exports = () => {
   const fs = require("fs");
+  const electron = require("electron");
   const confDir = "$confdir";
   const cssFile = "$cssFile";
 
-  function reload(style) {
-    style.innerHTML = fs.readFileSync(cssFile);
+  let lastStyleID;
+  function reload() {
+    if (lastStyleID) electron.webFrame.removeInsertedCSS(lastStyleID);
+    const css = fs.readFileSync(cssFile, { encoding: "utf-8" });
+    lastStyleID = electron.webFrame.insertCSS(css);
   }
 
-  function inject({ document, window }) {
-    window.addEventListener("load", () => {
-      const style = document.createElement("style");
-      reload(style);
-      document.head.appendChild(style);
-
-      fs.watch(confDir, {}, () => reload(style));
-    });
-  }
-
-  inject(require("electron").webFrame.context);
+  reload();
+  fs.watch(confDir, {}, () => reload());
 };
 
 module.exports.mw = (mainWindow) => {
