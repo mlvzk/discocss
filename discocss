@@ -15,11 +15,33 @@ module.exports = () => {
   const confDir = "$confdir";
   const cssFile = "$cssFile";
 
-  let lastStyleID;
   function reload() {
-    if (lastStyleID) electron.webFrame.removeInsertedCSS(lastStyleID);
     const css = fs.readFileSync(cssFile, { encoding: "utf-8" });
-    lastStyleID = electron.webFrame.insertCSS(css);
+
+    electron.webFrame.executeJavaScript(\`
+      (() => {
+        let loaded = false;
+        function load() {
+          if (loaded) return;
+
+          const disco = document.createElement("style");
+          disco.id = "disco";
+          disco.innerHTML = \${JSON.stringify(css)};
+
+          document.getElementById('disco')?.remove();
+          document.head.appendChild(disco);
+
+          loaded = true;
+        }
+
+        window.addEventListener("load", () => {
+          load();
+        });
+        try {
+          load();
+        } catch (e) {}
+      })();
+    \`);
   }
 
   reload();
