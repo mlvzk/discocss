@@ -4,6 +4,33 @@ confdir="${XDG_CONFIG_HOME:=$HOME/.config}/discocss"
 preloadFile="$confdir/preload.js"
 cssFile="$confdir/custom.css"
 
+# Generate random fixed-width ID using $1 param as seed.
+gen_id() {
+	WIDTH=7
+
+	ASCII=""
+	SEED=""
+	# Decode string into ascii values, seed must be numerical
+	for i in $(seq ${#1})
+	do 
+		LETTER=$(echo "$1" | cut -c "$i")
+		ASCII=$(printf "%d" "'$LETTER")
+		SEED="${SEED}${ASCII}"
+	done
+
+	SEED=$((SEED % 4294967295))
+
+	ID=$(awk -v s=$SEED 'BEGIN { srand(s); print int(rand()*32768) }' /dev/null)
+	while [ ${#ID} -lt $WIDTH ]
+	do
+		ID="$(awk -v s="$ID" 'BEGIN { srand(s); print int(rand()*32768) }' /dev/null)${ID}"
+	done
+	ID=$(echo "$ID" | cut -c "-${WIDTH}")
+}
+gen_id "$USER"
+
+preloadLink="/tmp/discocss-${ID}.js"
+
 mkdir -p "$confdir"
 
 touch "$cssFile"
@@ -60,7 +87,7 @@ module.exports.mo = (options) => {
 };
 EOF
 
-ln -f -s "$preloadFile" /tmp/discocss-preload.js
+ln -f -s "$preloadFile" "$preloadLink"
 
 if [ "$(uname)" = "Darwin" ]; then
   sed_options='-i ""'
@@ -70,8 +97,8 @@ else
   core_asar="$(echo "$XDG_CONFIG_HOME/discord/"*"/modules/discord_desktop_core/core.asar")"
 fi
 
-app_preload_replace='s|  // App preload script, used to provide a replacement native API now that|try {require\(`/tmp/discocss-preload.js`)()} catch \(e\) {console.error\(e\);} |'
-launch_main_app_replace='s|// launch main app window; could be called multiple times for various reasons| const dp = require(`/tmp/discocss-preload.js`);                             |'
+app_preload_replace='s|  // App preload script, used to provide a replacement native API now that|try {require\(`'"$preloadLink"'`)()} catch \(e\) {console.error\(e\);} |'
+launch_main_app_replace='s|// launch main app window; could be called multiple times for various reasons| const dp = require(`'"$preloadLink"'`);                             |'
 frame_true_replace='s|    mainWindowOptions.frame = true;|}dp.mo(mainWindowOptions);{        |'
 causing_the_window_replace='s|// causing the window to be too small on a larger secondary display| dp.mw(mainWindow);                                                |'
 LC_ALL=C sed $sed_options "$app_preload_replace; $launch_main_app_replace; $frame_true_replace; $causing_the_window_replace" \
