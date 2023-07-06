@@ -9,8 +9,6 @@ git clone https://github.com/mlvzk/discocss
 cp discocss/discocss /usr/bin # or any other directory in your $PATH
 ```
 
-If you use Arch Linux, there's an unofficial AUR package available: [discocss-git](https://aur.archlinux.org/packages/discocss-git/)
-
 # Usage
 
 Put your css in `~/.config/discocss/custom.css`
