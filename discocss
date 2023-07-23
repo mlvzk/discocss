@@ -80,8 +80,8 @@ LC_ALL=C sed $sed_options "$app_preload_replace; $launch_main_app_replace; $fram
 discordBin="$DISCOCSS_DISCORD_BIN"
 if [ "$discordBin" ]; then
   unset DISCOCSS_DISCORD_BIN
-  exec "$discordBin"
+  exec "$discordBin" "$@"
 else
-  command -v discord && exec discord
-  command -v Discord && exec Discord
+  command -v discord && exec discord "$@"
+  command -v Discord && exec Discord "$@"
 fi
