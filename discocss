@@ -61,12 +61,11 @@ module.exports.mo = (options) => {
 EOF
 
 ln -f -s "$preloadFile" /tmp/discocss-preload.js
+perl_options='-i -0pe'
 
 if [ "$(uname)" = "Darwin" ]; then
-  perl_options='-i -0pe ""'
   core_asar="$(echo "$HOME/Library/Application Support/discord/"*"/modules/discord_desktop_core/core.asar")"
 else
-	perl_options='-i -0pe'
   core_asar="$(echo "$XDG_CONFIG_HOME/discord/"*"/modules/discord_desktop_core/core.asar")"
 fi
 
