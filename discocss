@@ -68,8 +68,7 @@ if [ "$(uname)" = "Darwin" ]; then
 else
   core_asar="$(echo "$XDG_CONFIG_HOME/discord/"*"/modules/discord_desktop_core/core.asar")"
 fi
-
-app_preload_replace="s|  throw new Error\('Preload scripts should not be running in a subframe'\);\n}\n\nlet uncaughtExceptionHandler;\n\nfunction setUncaughtExceptionHandler\(handler\) {\n  uncaughtExceptionHandler = handler;\n}\n\nif \(window.opener === null\) {\n|throw new Error\(\);}let uncaughtExceptionHandler;function setUncaughtExceptionHandler\(handler\){uncaughtExceptionHandler=handler;}if \(window.opener === null\) {try{require\('/tmp/discocss-preload.js'\)\(\)}catch\(e\){console.error\(e\);}\n|"
+app_preload_replace="s|if \(!process.isMainFrame\) {\n  throw new Error\('Preload scripts should not be running in a subframe'\);\n}\nlet uncaughtExceptionHandler;\nfunction setUncaughtExceptionHandler\(handler\) {\n  uncaughtExceptionHandler = handler;\n}\nif \(window.opener === null\) {\n|if\(!process.isMainFrame\){throw new Error\(\);}\nlet uncaughtExceptionHandler;\nfunction setUncaughtExceptionHandler\(h\){uncaughtExceptionHandler=h;}\nif \(window.opener === null\) {\ntry { require\('/tmp/discocss-preload.js'\)\(\) } catch\(e\) { console.error\(e\); } \n|"
 launch_main_app_replace='s|// launch main app window; could be called multiple times for various reasons| const dp = require(`/tmp/discocss-preload.js`);                             |'
 frame_true_replace='s|    mainWindowOptions.frame = true;|}dp.mo(mainWindowOptions);{        |'
 causing_the_window_replace='s|// causing the window to be too small on a larger secondary display| dp.mw(mainWindow);                                                |'
